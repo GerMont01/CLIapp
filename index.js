@@ -1,3 +1,15 @@
+const os = require('os');
+const checkDiskSpace = require('check-disk-space').default;
+
+const host = os.hostname();
+const cpu = os.cpus();
+const totalmem = os.totalmem();
+const freemem = os.freemem();
+const network = os.networkInterfaces();
+
+let diskspace = [];
+
+
 const args= [{
         name:'arch',
         description:'Display the processor architecture'
@@ -17,6 +29,26 @@ const args= [{
     {
         name:'rp',
         description:'displays a random prime number between the range defined by the next two arguments \n         where the first is the minimum and the second is the maximum value \n         For example: rp 1 100'
+    },
+    {
+        name:'host',
+        description:'displays the host name'
+    },
+    {
+        name:'cpu',
+        description:'displays the cpu model and speed'
+    },
+    {
+        name:'mem',
+        description:'displays the total and free memory'
+    },
+    {
+        name:'ip',
+        description:'displays the ip adress of the host'
+    },
+    {
+        name:'disk',
+        description:'displays the total and free disk space'
     }]
 class Application {
 	constructor(ExecutablePath = undefined, CommandLineArguments = undefined)
@@ -35,6 +67,25 @@ class Application {
                 case 'cwd':
                     console.log(`The current working directory is: ${process.cwd()}`)
                     break;
+                case 'host':
+                    console.log(`The host name is: ${host}`)
+                    break;
+                case 'cpu':
+                    console.log(`Cpu Model: ${cpu[0].model} \nCpu Speed: ${cpu[0].speed/1000}GHz`)
+                    break;
+                case 'mem':
+                    console.log(`The total memory is: ${totalmem/1073741824}GB \nThe free memory is: ${freemem/1073741824}GB`)
+                    break;
+                case 'ip':
+                    console.log(`IP adress: ${network['Wi-Fi'][1].address}`)
+                    break;        
+                case 'disk':
+                    checkDiskSpace('C:/').then((diskSpace) => {
+                        diskspace = diskSpace
+                        console.log(`Total Diskspace: ${diskspace.size/1073741824}GB \nFree Diskspace: ${diskspace.free/1073741824}GB`)
+                    })
+                    
+                    break;         
                 case `rp`:
                     const range = [parseInt(CommandLineArguments[i+1]), parseInt(CommandLineArguments[i+2])];
                     const getPrimes = (min, max) => {
